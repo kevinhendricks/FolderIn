@@ -1,0 +1,2 @@
+v030
+  - First official release of the FolderIn plugin for Sigil
