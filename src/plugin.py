@@ -20,16 +20,7 @@ from zipfile import ZipFile
 
 from contextlib import contextmanager
 
-PY3 = sys.version_info[0] == 3
-
-# protect so that it gets to proper error message with python 2
-if PY3:
-    import tkinter
-    import tkinter.ttk as tkinter_ttk
-    import tkinter.constants as tkinter_constants
-    import tkinter.filedialog as tkinter_filedialog
-
-
+from plugin_utils import QtWidgets
 
 # convert string to utf-8
 def utf8_str(p, enc='utf-8'):
@@ -134,12 +125,8 @@ def build_epub_from_folder_contents(foldpath, epub_filepath):
 # the plugin entry point
 def run(bk):
 
-    if not PY3:
-        print("This plugin requires Python 3.4 or later")
-        return -1
-    
-    if bk.launcher_version() < 20160130:
-        print("This plugin requires Sigil-0.9.3 or later")
+    if bk.launcher_version() < 20230315:
+        print("This plugin requires Sigil-2.0.0 or later")
         return -1
 
     # handle preferences
@@ -150,30 +137,9 @@ def run(bk):
         basepath = os.path.expanduser('~')
 
     # ask the user to select the source folder to load files from
-    localRoot = tkinter.Tk()
-    localRoot.withdraw()
-    if sys.platform.startswith('darwin'):
-        # localRoot is is an empty topmost root window that is hidden by withdrawing it
-        # but on OSX localRoot needs to be centred, and lifted and focus_force used
-        # so that its child dialog will inherit focus upon launch
-        localRoot.overrideredirect(True)
-        # center on screen but make size 0 to hide the empty localRoot
-        w = localRoot.winfo_screenwidth()
-        h = localRoot.winfo_screenheight()
-        x = int(w/2)
-        y = int(h/2)
-        localRoot.geometry('%dx%d+%d+%d' % (0, 0, x, y))
-        localRoot.deiconify()
-        localRoot.lift()
-        localRoot.focus_force()
-    foldopt = {}
-    foldopt['parent'] = localRoot
-    foldopt['initialdir'] = basepath
-    foldopt['title'] = 'Select Folder to Input into Sigil'
-    foldopt['mustexist']= True
-    foldpath = tkinter_filedialog.askdirectory(**foldopt)
-    # localRoot.destroy()
-    localRoot.quit()
+    app = QtWidgets.QApplication(sys.argv)
+    foldpath = QtWidgets.QFileDialog.getExistingDirectory(None, 'Select Folder to Input Into Sigil', basepath)
+    app.quit()
 
     if not foldpath:
         print("FolderIn plugin cancelled by user")

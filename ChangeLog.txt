@@ -1,2 +1,5 @@
+v040
+  - remove tk giu and replace with a Qt based PySide6
+  
 v030
   - First official release of the FolderIn plugin for Sigil
