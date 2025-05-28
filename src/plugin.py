@@ -20,7 +20,7 @@ from zipfile import ZipFile
 
 from contextlib import contextmanager
 
-from plugin_utils import QtWidgets
+from plugin_utils_light import QtWidgets
 
 # convert string to utf-8
 def utf8_str(p, enc='utf-8'):
